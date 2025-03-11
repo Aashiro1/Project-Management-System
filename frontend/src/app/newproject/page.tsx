@@ -14,7 +14,7 @@ import { format } from "date-fns";
 import { createProject } from "../api/projectApi";  // Import the API function
 import {  toast } from "sonner";
 
-export default function NewProjectForm({ onClose }: { onClose: () => void }) {
+export default function NewProjectForm({ onClose, onProjectAdded }: { onClose: () => void, onProjectAdded: () => void }) {
   const [name, setName] = useState("");
   const [status, setStatus] = useState("pending");
   const [startDate, setStartDate] = useState<Date | undefined>();
@@ -48,6 +48,7 @@ export default function NewProjectForm({ onClose }: { onClose: () => void }) {
 
       await createProject(ProjectData);
       toast.success("Project created successfully!");
+      onProjectAdded(); // Fetch latest projects
       onClose(); // Close the modal after saving
     } catch (error) {
       toast.error("Failed to create Project");
@@ -139,6 +140,8 @@ export default function NewProjectForm({ onClose }: { onClose: () => void }) {
           Cancel
         </Button>
       </div>
+      
     </>
   );
 }
+

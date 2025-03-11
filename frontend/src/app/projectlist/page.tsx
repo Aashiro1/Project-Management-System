@@ -27,20 +27,22 @@ export default function ProjectList() {
   const [open, setOpen] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
 
-  // Fetch projects from backend
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const response = await fetch("http://127.0.0.1:8000/api/projects/");  // Adjust this to match your backend endpoint
-        const data = await response.json();
-        setProjects(data);
-      } catch (error) {
-        console.error("Error fetching projects:", error);
-      }
-    };
+// Define function outside of useEffect so it can be called when needed
+const fetchProjects = async () => {
+  try {
+    const response = await fetch("http://127.0.0.1:8000/api/projects/");
+    const data = await response.json();
+    setProjects(data);
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+  }
+};
 
-    fetchProjects();
-  }, []);
+// Fetch projects initially
+useEffect(() => {
+  fetchProjects();
+}, []);
+
 
     // Function to update state when a new project is added
 
@@ -73,7 +75,7 @@ export default function ProjectList() {
               <DialogHeader>
                 <DialogTitle>New Project</DialogTitle>
               </DialogHeader>
-              <NewProjectForm onClose={() => setOpen(false)} / >
+              <NewProjectForm onClose={() => setOpen(false)} onProjectAdded={fetchProjects} />
               {/* <div className="flex ml-auto gap-2">
                 <Button className="bg-blue-500 hover:bg-blue-600">Save</Button>
                 <Button onClick={() => setOpen(false)} variant="secondary">
