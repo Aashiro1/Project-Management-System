@@ -100,7 +100,7 @@ export default function Dashboard() {
                     </td>
                     <td className="border p-2 text-center">
                       <Button size="sm" variant="outline">
-                        <Link href="/viewproject"> View </Link>
+                      <Link href={`/viewproject/${project.id}`}>View</Link>
                       </Button>
                     </td>
                   </tr>

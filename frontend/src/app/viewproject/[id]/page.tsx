@@ -1,5 +1,6 @@
 'use client';
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,11 +9,35 @@ import { Separator } from "@/components/ui/separator";
 import Layout from "@/components/ui/Layout";
 import { Dialog, DialogContent,DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import Link from "next/link";
-import NewTaskForm from "../newtask/page";
-import TaskList from "../taskslist/page";
+// import NewTaskForm from "../../newtask/page";
+import TaskList from "../../taskslist/page";
 
 export default function ProjectView() {
     const [open, setOpen] = useState(false);
+    const { id } = useParams(); // Get project ID from URL
+
+    const [project, setProject] = useState<{
+      name: string;
+      description: string;
+      start_date: string;
+      end_date: string;
+      status_display: string;
+      project_manager: string;
+    } | null>(null);
+
+    useEffect(() => {
+      if (id) {
+        fetch(`http://127.0.0.1:8000/api/projects/${id}/`)
+          .then((res) => res.json())
+          .then((data) => setProject(data))
+          .catch((error) => console.error("Error fetching project:", error));
+      }
+    }, [id]);
+  
+    if (!project) {
+      return <p>Loading project details...</p>;
+    }
+
   return (
     <Layout>
     <div className="p-6">
@@ -25,21 +50,21 @@ export default function ProjectView() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <h2 className="font-bold flex flex-col space-y-2">Project Name</h2>
-              <p>Sample Project</p>
+              <p>{project.name}</p>
               <h2 className="font-bold mt-2 flex flex-col space-y-2">Description</h2>
-              <p className="text-sm text-gray-600">Lorem ipsum dolor sit amet...</p>
+              <p className="text-sm text-gray-600">{project.description}</p>
             </div>
             <div>
-              <p><span className="font-bold flex flex-col space-y-2">Start Date:</span> November 03, 2020</p>
-              <p><span className="font-bold flex flex-col space-y-2 mt-2">End Date:</span> January 20, 2021</p>
-              <p><span className="font-bold flex flex-col space-y-2 mt-2">Status:</span> <Badge variant="outline">On-Progress</Badge></p>
+              <p><span className="font-bold flex flex-col space-y-2">Start Date:</span> {project.start_date}</p>
+              <p><span className="font-bold flex flex-col space-y-2 mt-2">End Date:</span> {project.end_date}</p>
+              <p><span className="font-bold flex flex-col space-y-2 mt-2">Status:</span> <Badge variant="outline">{project.status_display}</Badge></p>
               <p className="flex items-center gap-2 mt-2">
                 <span className="font-bold">Project Manager:</span>
                 <Avatar className="w-6 h-6">
                   <AvatarImage src="/user.png" />
                   <AvatarFallback>JS</AvatarFallback>
                 </Avatar>
-                John Smith
+                {project.project_manager}
               </p>
             </div>
           </div>
@@ -77,7 +102,7 @@ export default function ProjectView() {
               <DialogHeader>
                 <DialogTitle>New Task</DialogTitle>
               </DialogHeader>
-              <NewTaskForm />
+              {/* <NewTaskForm /> */}
               <div className="flex ml-auto gap-2">
                 <Button className="bg-blue-500 hover:bg-blue-600">Save</Button>
                 <Button onClick={() => setOpen(false)} variant="secondary">Cancel</Button>
@@ -104,7 +129,7 @@ export default function ProjectView() {
               <DialogHeader>
                 <DialogTitle>New Task</DialogTitle>
               </DialogHeader>
-              <NewTaskForm />
+              {/* <NewTaskForm /> */}
               <div className="flex ml-auto gap-2">
                 <Button className="bg-blue-500 hover:bg-blue-600">Save</Button>
                 <Button onClick={() => setOpen(false)} variant="secondary">Cancel</Button>

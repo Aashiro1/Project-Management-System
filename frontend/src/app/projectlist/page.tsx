@@ -95,7 +95,7 @@ useEffect(() => {
             {/* Controls */}
             <div className="flex justify-between items-center">
               <div>
-              Showing {projects.length} entries
+              Showing {projects.filter(p => p.name.toLowerCase().includes(search.toLowerCase())).length} out of {projects.length} entries
               </div>
               <Input
                 placeholder="Search..."
@@ -146,7 +146,9 @@ useEffect(() => {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="start">
-                            <DropdownMenuItem>View</DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                            <Link href={`/viewproject/${project.id}`}>View</Link>
+                            </DropdownMenuItem>
                             <DropdownMenuItem>Edit</DropdownMenuItem>
                             <DropdownMenuItem
                               onClick={() => {
