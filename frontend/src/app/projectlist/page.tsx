@@ -11,6 +11,7 @@ import { Toaster } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import NewProjectForm from "../newproject/page";
 import Layout from "@/components/ui/Layout";
+import DeleteProjectDialog from "../deleteproject/page";
 
 // Define the project type
 export type Project = {
@@ -26,6 +27,8 @@ export default function ProjectList() {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<{ id: number; name: string } | null>(null);
 
 // Define function outside of useEffect so it can be called when needed
 const fetchProjects = async () => {
@@ -145,7 +148,14 @@ useEffect(() => {
                           <DropdownMenuContent align="start">
                             <DropdownMenuItem>View</DropdownMenuItem>
                             <DropdownMenuItem>Edit</DropdownMenuItem>
-                            <DropdownMenuItem>Delete</DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setSelectedProject({ id: project.id, name: project.name });
+                                 setDeleteDialogOpen(true);
+                                 }}
+                                  >
+                                  Delete
+                            </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>
@@ -162,6 +172,16 @@ useEffect(() => {
             </Table>
           </CardContent>
         </Card>
+        
+        {selectedProject && (
+            <DeleteProjectDialog
+              projectId={selectedProject.id}
+              projectName={selectedProject.name}
+              isOpen={deleteDialogOpen}
+              onClose={() => setDeleteDialogOpen(false)}
+              onDeleteSuccess={fetchProjects}
+            />
+          )}
       </div>
     </Layout>
   );
